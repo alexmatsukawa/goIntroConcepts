@@ -113,5 +113,92 @@ func main() {
 	}
 
 	//LOOPING
-	
+	//BASIC FOR LOOP
+	for j := 0; j < 5; j++ {
+		fmt.Println(j)
+	} 
+	//NOTE: no comma operator, so cannot initialize multiple separate counters in one for loop line
+	//To do multiple counters in a line, look at following EX:
+	for k, h := 0, 0; k < 5; k, h = k + 1, h + 1 {
+		fmt.Println(k, h)
+	}
+	//cannot do ++ operation here due to go limitations with multiple variables
+
+	//COUNTER MANIPULATION (NOT RECOMMENDED)
+	for l := 0; l < 5; l++ {
+		fmt.Println(l)
+		if l % 2 == 0 {
+			l /= 2
+		} else {
+			l = 2 * l + 1
+		}
+	} 
+
+	//EX: Initializing counter var early
+	/*
+	i := 0
+	for ; i < 5; i++ {
+		fmt.Println(i)
+	} 
+
+	//EX: removing incrementer
+	i := 0
+	for ; i < 5; {
+		fmt.Println(i)
+		i++
+	} 
+	//NEEDS SEMICOLON TO INDICATE THAT THE FOR INITIALIZERS STILL EXIST IF ONLY ONE ITEM IS MISSING
+	i := 0
+	for i < 5 {
+		fmt.Println(i)
+		i++
+	} 
+	//SAME AS ABOVE
+	*/
+
+	//INFINITE LOOPING
+	y := 0
+	for {
+		fmt.Println(y)
+		y++
+		if y == 5 {
+			break
+		}
+	}
+
+	//NESTED LOOP AND LABELS
+Loop:
+	for m := 1; m <= 3; m++ {
+		for n := 1; n <= 3; n++{
+			fmt.Println(m * n)
+			if m * n >= 3 {
+				break Loop //-> w/o label, you would only break out of inner loop and not the outer loop
+			}
+		}
+	}
+
+	//COLLECTIONS AND FOR LOOPS
+	s := []int{1, 2, 3}
+	fmt.Println(s)
+	for k, v := range s {
+		fmt.Println(k, v) //-> returns index and value at index; works for slices and arrays
+	}
+
+	for k, v := range statePopulations {
+		fmt.Println(k, v)
+	}
+
+	//can also just take either key or values with following syntax
+	/*
+	//getting keys
+	for k := range statePopulations {
+		fmt.Println(k)
+	}
+
+	//getting values
+	for _, v := range statePopulations {
+		fmt.Println(k)
+	}
+	*/
 }
+
