@@ -44,8 +44,55 @@ func main() {
 	fmt.Println(d)
 	fmt.Println("")
 
-	//FUNCTIONS AS TYPES
-	
+	//ANONYMOUS FUNCTIONS
+	//Basic Anonymous Function
+	func() {
+		msg := "Hello World" //-> isolated variable (only available in this func and not in the main function)
+		fmt.Println(msg)
+		fmt.Println("")
+	}() //-> these parentheses will invoke the function (immediately executes); needs this to run at compilation
+
+	//Functions as Variables
+	f := func() {
+		fmt.Println("Hello World")
+	}
+	f() //-> this will invoke the func we define as f when we want to
+	fmt.Println("")
+
+	/* CAN ALSO DEFINE F AS THE FOLLOWING
+	var f func() = func() {
+		fmt.Println("Hello World")
+	}
+	f()
+	*/
+
+	//MORE COMPLEX EX:
+	var div func(float64, float64) (float64, error) //->defining params with first parentheses and return types with second parentheses
+	div = func(a, b float64) (float64, error) {
+		if b == 0.0 {
+			return 0.0, fmt.Errorf("Cannot divide by zero")
+		} else {
+			return a / b, nil
+		}
+	}
+	d1, err := div(5.0, 3.0)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(d1)
+	fmt.Println("")
+	//CANNOT CALL THIS FUNCTION BEFORE THE DECLARATION HERE
+
+	//METHODS
+	g := greeter {
+		greeting: "Hello",
+		name: "World",
+	}
+	g.greet()
+	g.greet2()
+	fmt.Println("The new name is:", g.name)
+	fmt.Println("")
 }
 
 //HELPER FUNCTION EXAMPLE
@@ -115,4 +162,22 @@ func divide(a, b float64) (float64, error) {//Multiple return values in function
 		return 0.0, fmt.Errorf("Cannot divide by zero") //multiple return values
 	}
 	return a / b, nil //multiple return values
+}
+
+//FUNCTION EXAMPLE W/ METHODS
+type greeter struct {
+	greeting string
+	name string
+}
+
+//A method is a function the executes under a known context (known context == any type)
+func (g greeter) greet() { //(g greeter) [i.e. value receiver] is what turns this function into a method; allows us to access the values in the struct
+	//we take in a copy of the struct, not the actual struct with the above method declaration; means we cannot acrually change any of the values that are listed in the struct
+	fmt.Println(g.greeting, g.name)
+}
+
+func (g *greeter) greet2() {//this takes in a pointer (pointer receiver) instead of a value
+	fmt.Println(g.greeting, g.name)
+	//now we can manipulate the struct data since we receive the actual struct instead of a copy
+	g.name = "Roy"
 }
