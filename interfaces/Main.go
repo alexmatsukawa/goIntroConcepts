@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io"
 )
 
 func main() {
@@ -27,8 +28,59 @@ func main() {
 	//TYPE CONVERSION
 	bwc := wc.(*BufferedWriterCloser) //type conversion
 	//as long as the type conversion succeeds, you can work with the variable as the newly converted type
+	//bwc := wc.(io.Reader) -> this returns a panic error since Go does not know how to convert our WriterCloser to an io.Reader
+	//Sometimes we want this to work though, so we must do the following...
+	r, ok := wc.(io.Reader)
+	if ok {
+		fmt.Println(r)
+	} else {
+		fmt.Println("Conversion failed...")
+	}
+
 	fmt.Println(bwc)
 	fmt.Println("")
+
+	//EMPTY INTERFACE
+	var myObj interface{} = NewBufferedWriterCloser() //declaration for an empty interface
+	//an empty interface is an interface with no method declarations
+	//Useful because we can cast any type to an empty interface since it has not associated methods declared with it
+	//Problem: can't really do anything with myObj since it has no methods it exposes
+	//To solve this, we need to do type conversion or use the reflect package to figure out what myObj actually is...
+	if wc2, ok := myObj.(WriterCloser); ok {
+		wc2.Write2([]byte("Hello Go, this is a test!"))
+		wc2.Close()
+	}
+	q, ok := myObj.(io.Reader)
+	if ok {
+		fmt.Println(q)
+	} else {
+		fmt.Println("Conversion failed...")
+	}
+	fmt.Println("")
+
+	//INTERFACE TYPE SWITCHES
+	var i interface{} = 0
+	switch i.(type) {//type casts the interface to a type to determine what the interface type is
+	case int:
+		fmt.Println("i is an integer")
+	case string:
+		fmt.Println("i is a string")
+	default:
+		fmt.Println("what is i...?")
+	}
+	//Usually paired with the empty interface to determine what type the empty interface is and what types you're expecting to receive
+	//NOTE: If any interface methods require a pointer receiver, the interface must be implemented with a pointer.
+	//If the interface methods only accept value types, you can use either a pointer or a value to implement the interface.  
+
+	//BEST INTERFACE PRACTICES
+	/* 
+	* use many small interfaces over a few monolithic ones
+	*	EX: io.Writer, io.Reader, interface{}
+	* 
+	* don't export interfaces for types that will be consumed
+	* do export interfaces for types that will be used by the package
+	* design functions and methods to receive interfaces whenever possible
+	*/
 }
 
 type Writer interface { //-> should name interfaces based on what they do (BEST PRACTICES)
@@ -111,3 +163,4 @@ func NewBufferedWriterCloser() *BufferedWriterCloser {//constructor function to 
 		buffer: bytes.NewBuffer([]byte{}),
 	}
 }
+
